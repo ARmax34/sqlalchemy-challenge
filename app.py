@@ -1,6 +1,6 @@
 import datetime as dt
 import numpy as np
-
+import pandas as pd
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
@@ -28,7 +28,7 @@ session = Session(engine)
 #################################################
 # Flask Setup
 #################################################
-## WORK NEEDED HERE ##
+app = Flask(__name__)
 
 
 #################################################
@@ -37,7 +37,14 @@ session = Session(engine)
 
 @app.route("/")
 def welcome():
-## WORK NEEDED HERE ##
+    """List all available api routes."""
+    return (
+        f"Available Routes:<br/>"
+        f"/api/v1.0/precipitation<br/>"
+        f"/api/v1.0/stations<br/>"
+        f"/api/v1.0/tobs<br/>"
+        f"/api/v1.0/temp<br/>"
+    )
 
 
 @app.route("/api/v1.0/precipitation")
@@ -52,8 +59,15 @@ def precipitation():
 
     session.close()
     # Dict with date as the key and prcp as the value
-    ## WORK NEEDED HERE ##
-    return ## WORK NEEDED HERE ##
+
+    # Save the query results as a Pandas DataFrame and set the index to the date column
+    results_df = pd.DataFrame(precipitation, columns=['date', 'prcp'])
+
+
+    # Sort the dataframe by date
+    results_df = results_df.sort_values("date", ascending=False).reset_index(drop=True)
+    print(results_df)
+    return jsonify(results_df.to_dict())
 
 
 @app.route("/api/v1.0/stations")
@@ -65,7 +79,9 @@ def stations():
 
     # Unravel results into a 1D array and convert to a list
     stations = list(np.ravel(results))
-    return ## WORK NEEDED HERE ##
+    #return jsonify(stations)
+    return jsonify(stations=stations)
+## WORK NEEDED HERE ##
 
 
 @app.route("/api/v1.0/tobs")
@@ -111,7 +127,8 @@ def stats(start=None, end=None):
         session.close()
 
         temps = list(np.ravel(results))
-        return ## WORK NEEDED HERE ##
+        return jsonify(temps=temps)
+        #return ## WORK NEEDED HERE ##
 
     # calculate TMIN, TAVG, TMAX with start and stop
     ## WORK NEEDED HERE ##
@@ -124,8 +141,9 @@ def stats(start=None, end=None):
 
     # Unravel results into a 1D array and convert to a list
     temps = list(np.ravel(results))
-    return ## WORK NEEDED HERE ##
+    return jsonify(temps=temps)
+    #return ## WORK NEEDED HERE ##
 
 
 if __name__ == '__main__':
-    ## WORK NEEDED HERE ##
+    app.run()
