@@ -53,12 +53,12 @@ def welcome():
         f"/api/v1.0/tobs<br/>"
         f"<br/>"
         f"Min, Max. and Avg. temperatures for given start date: (please use 'yyyy-mm-dd' format):<br/>"
-        f"/api/v1.0/min_max_avg/&lt;start date&gt;<br/>"
+        f"/api/v1.0/temps/&lt;start date&gt;<br/>"
         f"<br/>"
         f"Min. Max. and Avg. temperatures for given start and end date: (please use 'yyyy-mm-dd'/'yyyy-mm-dd' format for start and end values):<br/>"
-        f"/api/v1.0/min_max_avg/&lt;start date&gt;/&lt;end date&gt;<br/>"
+        f"/api/v1.0/temps/&lt;start date&gt;/&lt;end date&gt;<br/>"
         f"<br/>"
-        f"i.e. <a href='/api/v1.0/min_max_avg/2012-01-01/2016-12-31' target='_blank'>/api/v1.0/min_max_avg/2012-01-01/2016-12-31</a>"
+        f"i.e. <a href='/api/v1.0/temps/2012-01-01/2016-12-31' target='_blank'>/api/v1.0/temps/2012-01-01/2016-12-31</a>"
     )
 
 
@@ -141,7 +141,7 @@ def stats(start=None, end=None):
         # temps = list(np.ravel(results))
         # return jsonify(temps)
 
-        start = dt.datetime.strptime(start, "%m%d%Y")
+        start = dt.datetime.strptime(start, "%Y-%m-%d")
         results = session.query(*sel).\
             filter(Measurement.date >= start).all()
 
@@ -153,7 +153,7 @@ def stats(start=None, end=None):
     # calculate TMIN, TAVG, TMAX with start and stop
     ## WORK NEEDED HERE ##
     # end = dt.datetime.strptime(end, "%m/%d/%Y")
-    end = dt.datetime.strptime(end, "%m%d%Y")
+    end = dt.datetime.strptime(end, "%Y-%m-%d")
     results = session.query(*sel).\
         filter(Measurement.date >= start).\
         filter(Measurement.date <= end).all()
